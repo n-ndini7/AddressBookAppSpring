@@ -37,7 +37,7 @@ public class AddressBookAppController {
 	}
 
 	@GetMapping("/get/{Id}")
-	public ResponseEntity<ResponseDTO> getAddressBookData(@PathVariable("Id") long Id) {
+	public ResponseEntity<ResponseDTO> getAddressBookData(@PathVariable("Id") int Id) {
 		addData = addressBookService.getAddressBookDataById(Id);
 		responsedto = new ResponseDTO("Get Call for ID Successfull", addData);
 		return new ResponseEntity<ResponseDTO>(responsedto, HttpStatus.OK);
@@ -50,15 +50,16 @@ public class AddressBookAppController {
 		return new ResponseEntity<ResponseDTO>(responsedto, HttpStatus.OK);
 	}
 
-	@PutMapping("/update")
-	public ResponseEntity<ResponseDTO> updateAddressBookData(@RequestBody AddressBookDTO addDto) {
-		addData = addressBookService.updateAddressBookData(addDto);
+	@PutMapping("/update/{Id}")
+	public ResponseEntity<ResponseDTO> updateAddressBookData(@PathVariable("Id") int Id,
+			@RequestBody AddressBookDTO addDto) {
+		addData = addressBookService.updateAddressBookData(Id, addDto);
 		responsedto = new ResponseDTO("Updated Address Book Data Successfully", addData);
 		return new ResponseEntity<ResponseDTO>(responsedto, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/delete/{Id}")
-	public ResponseEntity<ResponseDTO> deleteAddressBookData(@PathVariable("Id") long Id) {
+	public ResponseEntity<ResponseDTO> deleteAddressBookData(@PathVariable("Id") int Id) {
 		addressBookService.deleteAddressBookDataById(Id);
 		responsedto = new ResponseDTO("Deleted Successfully, Deleted ID:" + Id);
 		return new ResponseEntity<ResponseDTO>(responsedto, HttpStatus.OK);
