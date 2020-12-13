@@ -22,4 +22,10 @@ public class GlobalExceptionHandler {
 		ResponseDTO response = new ResponseDTO("Exception while processing REST request",errMsg);
 		return new ResponseEntity<ResponseDTO>(response,HttpStatus.BAD_REQUEST);
 	}
+	
+	@ExceptionHandler(AddressBookException.class)
+	public ResponseEntity<ResponseDTO> handleAddressBookException(AddressBookException exception){
+		ResponseDTO response = new ResponseDTO("Exception while processing REST request",exception.getMessage());
+		return new ResponseEntity<ResponseDTO>(response,HttpStatus.BAD_REQUEST);
+	}
 }
