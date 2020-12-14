@@ -3,17 +3,18 @@ package com.service;
 import java.util.List;
 
 import com.dto.AddressBookDTO;
+import com.dto.ResponseDTO;
 import com.model.AddressBookData;
 
 public interface IAddressBookService {
 
 	List<AddressBookData> getAddressBookData();
 
-	AddressBookData getAddressBookDataById(int id);
+	ResponseDTO getAddressBookDataById(long id);
 
-	AddressBookData createAddressBookData(AddressBookDTO addDto);
+	ResponseDTO createAddressBookData(AddressBookDTO addDto);
 
-	void deleteAddressBookDataById(int id);
+	ResponseDTO deleteAddressBookDataById(long id);
 
-	AddressBookData updateAddressBookData(int Id, AddressBookDTO addDto);
+	ResponseDTO updateAddressBookData(long Id, AddressBookDTO addDto);
 }
