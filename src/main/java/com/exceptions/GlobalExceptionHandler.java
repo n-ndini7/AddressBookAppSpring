@@ -1,6 +1,7 @@
 package com.exceptions;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -28,4 +29,11 @@ public class GlobalExceptionHandler {
 		ResponseDTO response = new ResponseDTO("Exception while processing REST request",exception.getMessage());
 		return new ResponseEntity<ResponseDTO>(response,HttpStatus.BAD_REQUEST);
 	}
+	
+	@ExceptionHandler(NoSuchElementException.class)
+	public final ResponseEntity<ResponseDTO> NoElementException(NoSuchElementException e) {
+		ResponseDTO status = new ResponseDTO("User does not exist in Address Book!!");
+		return new ResponseEntity<ResponseDTO>(status, HttpStatus.OK);
+	}
+	
 }

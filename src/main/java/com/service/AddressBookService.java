@@ -1,57 +1,79 @@
 package com.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dto.AddressBookDTO;
+import com.dto.ResponseDTO;
 import com.exceptions.AddressBookException;
 import com.model.AddressBookData;
+import com.repository.AddressBookRepository;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class AddressBookService implements IAddressBookService {
 
-	AddressBookData addBookData = null;
-	private List<AddressBookData> addList = new ArrayList<>();
+	String status = null;
+	@Autowired
+	private AddressBookRepository addressBookRepository;
 
 	@Override
 	public List<AddressBookData> getAddressBookData() {
-		return addList;
+		return addressBookRepository.findAll().stream().collect(Collectors.toList());
 	}
 
 	@Override
-	public AddressBookData getAddressBookDataById(int id) {
-		return addList.stream().filter(add -> add.getId() == id).findFirst()
-				.orElseThrow(() -> new AddressBookException("Contact Not Found in AddressBook"));
+	public ResponseDTO getAddressBookDataById(long id) {
+		AddressBookData adbkData = addressBookRepository.findById(id).get();
+		if (adbkData.getFirstName() != null) {
+			status = "Get Call Success or Employee Payroll ID : " + id;
+			return new ResponseDTO(status, adbkData);
+		} else {
+			throw new AddressBookException("Contact Not Found in AddressBook");
+		}
 	}
 
 	@Override
-	public AddressBookData createAddressBookData(AddressBookDTO addDto) {
-		addBookData = new AddressBookData(addList.size() + 1, addDto);
-		addList.add(addBookData);
-		return addBookData;
+	public ResponseDTO createAddressBookData(AddressBookDTO addDto) {
+		AddressBookData adbkData = new AddressBookData(addDto);
+		log.debug("User Data: ",adbkData.toString());
+		addressBookRepository.save(adbkData);
+		status = "Created User Data in Address Book Successfully";
+		return new ResponseDTO(status, adbkData);
 	}
 
 	@Override
-	public AddressBookData updateAddressBookData(int Id, AddressBookDTO addDto) {
-		addBookData = this.getAddressBookDataById(Id);
-		addBookData.setFirstName(addDto.getFirstName());
-		addBookData.setLastName(addDto.getLastName());
-		addBookData.setAddress(addDto.getAddress());
-		addBookData.setState(addDto.getState());
-		addBookData.setCity(addDto.getCity());
-		addBookData.setZip(addDto.getZip());
-		addBookData.setPhoneNo(addDto.getPhoneNo());
-		addBookData.setEmail(addDto.getEmail());
-		addList.set(Id - 1, addBookData);
-		return addBookData;
+	public ResponseDTO updateAddressBookData(long id, AddressBookDTO addDto) {
+		AddressBookData adbkData = addressBookRepository.findById(id).get();
+		if(adbkData.getId()==id) {
+			adbkData.setFirstName(addDto.firstName);
+			adbkData.setLastName(addDto.lastName);
+			adbkData.setAddress(addDto.address);
+			adbkData.setContact(addDto.contact);
+			addressBookRepository.save(adbkData);
+			status = "Updated User Data Successfully";
+			return new ResponseDTO(status, adbkData);
+		}
+		else
+		{
+			throw new AddressBookException("Contact Not Found in AddressBook");
+		}
 	}
 
 	@Override
-	public void deleteAddressBookDataById(int id) {
-
-		addList.remove(id - 1);
+	public ResponseDTO deleteAddressBookDataById(long id) {
+		AddressBookData adbkData = addressBookRepository.findById(id).get();
+		if (adbkData.getFirstName() != null) {
+			addressBookRepository.deleteById(adbkData.getId());
+			status = "Deleted Successfully, Deleted ID:" + id;
+			return new ResponseDTO(status);
+		} else {
+			throw new AddressBookException("Contact Not Found in AddressBook");
+		}
 	}
-
 }
